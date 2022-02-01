@@ -82,6 +82,20 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					species inventories, field images, taxonomic information, species distribution data, and more.
 				</p>
 				<p>
+					The Red de Herbarios Mexicanos is a collaboration of Mexican herbaria with a unified goal of providing data management
+					resource to the research community as well as a publicly accessible biodiversity information center containing:
+					<ul>
+						<li>registration of specimen and field observation</li>
+						<li>species distribution maps</li>
+						<li>species inventories</li>
+						<li>images (specimens and field photos)</li>
+						<li>interactive identification keys</li>
+						<li>taxonomic </li>
+					</ul>
+				</p>
+				<p>
+					The Taxon Search field appears on the right margin, where you can query by scientific name to consult Taxon Profile pages.
+					Use the "Collections" option within the "Search Tools" section of the main menu to query specimen and observation records.
 				</p>
 				<p>
 					If you have questions, comments, or recommendations, please share your feedback with the
@@ -93,20 +107,36 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		}
 		else{
 			?>
-			<h1>Bienvenido al Portal de Red de Herbarios Mexicanos</h1>
+			<h1>Bienvenidos a la Red de Herbarios Mexicanos</h1>
 			<div style="padding: 0px 10px;font-size:130%">
 				<p>
 					Este portal de datos está destinado a servir como un recurso colaborativo que integra contenido de biodiversidad de diversas fuentes.
 					El portal se puede utilizar para administrar datos en vivo directamente dentro del portal, o mapear conjuntos de datos administrados en
-					sistemas de manejo externos. El tipo de datos disponibles dentro de este recurso incluye datos de especímenes, observaciones de campo,
-					inventarios de especies, imágenes de campo, información taxonómica, datos de distribución de especies y más.
+					sistemas de manejo externos. El tipo de datos disponibles dentro de este recurso incluye datos e imágenes de especímenes, observaciones de campo,
+					inventarios de especies, fotografías de campo, información taxonómica, datos de distribución de especies y más.
 				</p>
 				<p>
+					La Red de Herbarios Mexicanos, pretende establecer un puente de colaboración entre los herbarios de México,
+					otorgando herramientas para la gestión de colecciones y dar acceso a diferentes fuentes de información como:
+					<ul>
+						<li>registro de especímenes y observaciones de campo</li>
+						<li>mapas de distribución de especies</li>
+						<li>listas de especies dinámicas y estáticas</li>
+						<li>imágenes (especímenes y fotos de campo)</li>
+						<li>claves interactivas para identificación</li>
+						<li>diccionario taxonómico</li>
+					</ul>
 				</p>
 				<p>
-					Visite la <a href="includes/usagepolicy.php">página de Política de Uso de Datos</a> para obtener información acerca de cómo citar los datos obtenidos de este recurso web.
-					<a href="/portal/profile/newprofile.php?"><b>Regístrese</b></a>
-					como un usuario regular y envíe por favor sus comentarios y opiniones a <a href="mailto:jsanchez@guayacan.uson.mx">jsanchez@guayacan.uson.mx</a>.
+					En el margen derecho aparece el campo Búsqueda de Taxón, donde se pueden consultar fichas de plantas por medio de alguna categoría taxonómica como familia,
+					género o nombre científico. Para efectuar búsquedas mas precisas utilice la opción "Colecciones" en la sección "Herramientas de Búsqueda" del menú principal.
+				</p>
+				<p>
+					Puede obtener indicaciones sobre como citar los datos obtenidos en este sitio web, a través de la página
+					<a href="includes/usagepolicy.php">Directrices para el uso de los datos</a>.
+				</p>
+				<p>
+					<a href="/portal/profile/newprofile.php?"><b>Regístrese</b></a> como un usuario regular y envíe sus comentarios y opiniones a <a href="mailto:jsanchez@guayacan.uson.mx">jsanchez@guayacan.uson.mx</a>.
 				</p>
 			</div>
 			<?php

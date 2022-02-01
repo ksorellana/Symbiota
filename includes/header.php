@@ -15,8 +15,11 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/left_logo.jpg" style="margin:0px 30px;width:130px" />
 				</div>
 				<div style="margin-left: 40px; color: #fff; font-family: 'Mate', serif; letter-spacing: 1px; text-shadow: 0 0 7px rgba(0,0,0,0.5);">
-					<div style="margin-top:30px; font-size:70px; line-height:48px; padding-top: 40px">
+					<div style="margin-top:30px; font-size:60px; line-height:48px;">
 						Red de Herbarios Mexicanos
+					</div>
+					<div style="margin-top:20px; font-size:35px; font-style: italic">
+						Un puente de colaboración para los herbarios de México
 					</div>
 				</div>
 			</div>
