@@ -84,7 +84,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					una iniciativa impulsada conjuntamente desde 2015 por la <a href="https://www.uson.com/" target="_blank">Universidad de Sonora</a>
 					y la <a href="https://biokic.asu.edu/" target="_blank">Universidad Estatal de Arizona (BioKIC)</a>.
 					El portal de datos sobre biodiversidad se ha establecido utilizando el sofware
-					<b><a href="https://symbiota.org" target="_blank">Symbiota</a></b>.
+					<a href="https://symbiota.org" target="_blank">Symbiota</a>.
 					En las páginas de ayuda de <a href="https://biokic.github.io/symbiota-docs/" target="_blank">Symbiota Support Hub</a>
 					podrá conocer mas sobre las características y capacidades de este portal.
 				</p>
