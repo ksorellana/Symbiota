@@ -50,14 +50,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						<?php echo $basePath.'index.php'; ?>, YYYY-MM-DD)<br/><br/>
 						<b>For example:</b><br/>
 						Biodiversity occurrence data published by:
-						Field Museum of Natural History, Museum of Vertebrate Zoology, and New York Botanical Garden
-						(Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-						<?php echo $basePath.'index.php, '.date('Y-m-d').')'; ?>
+						Herbario "Luz María Villarreal de Puga" de la Universidad de Guadalajara (IBUG)
+						(Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal, '<?php echo $_SERVER['HTTP_HOST'].', '.date('Y-m-d'); ?>)
 					</div>
 				</div>
-				<div>
-				</div>
-
 				<a name="occurrences"></a>
 				<h2>Occurrence Record Use Policy</h2>
 			    <div style="margin:10px;">
@@ -107,7 +103,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					additional permits may be required. It is best to coordinate such efforts with a
 					regional institution that manages a publically accessible collection.
 				</div>
-
 			    <div style="margin:15px;">
 					<b>Disclaimer:</b> This data portal may contain specimens and historical records that are culturally sensitive.
 					The collections include specimens dating back over 200 years collected from all around the world.
@@ -118,9 +113,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			}
 			else{
 				?>
-
 				<h1>Directrices para el uso aceptable de los datos</h1>
-
 				<h2>Formatos de citas recomendadas</h2>
 				<div style="margin:10px">
 					Utilice uno de los siguientes formatos para citar los datos recuperados de la red <?php echo $DEFAULT_TITLE; ?>:
@@ -140,17 +133,13 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					<div style="margin:10px;">
 						Datos sobre biodiversidad publicado por: &lt;Lista de Colecciones&gt;
 						(Accedido a trav&eacute;s del portal de datos <?php echo $DEFAULT_TITLE; ?>,
-						<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'index.php'; ?>, DD-MM-AAAA)<br/><br/>
+						<?php echo 'https//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'index.php'; ?>, DD-MM-AAAA)<br/><br/>
 						<b>Por ejemplo:</b><br/>
 						Datos sobre biodiversidad publicado por:
-						Field Museum of Natural History, Museum of Vertebrate Zoology, and New York Botanical Garden
-						(Accedido a trav&eacute;s del portal de datos <?php echo $DEFAULT_TITLE; ?>,
-						<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
+						Herbario "Luz María Villarreal de Puga" de la Universidad de Guadalajara (IBUG)
+						(Accedido a través del portal de datos, '<?php echo $_SERVER['HTTP_HOST'].', '.date('Y-m-d'); ?>)
 					</div>
 				</div>
-				<div>
-				</div>
-
 				<a name="occurrences"></a>
 				<h2>Pol&iacute;tica de Uso de Registros</h2>
 			    <div>
@@ -175,7 +164,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			    <div style="margin:15px;">
 			    	Las im&aacute;genes dentro de este sitio web han sido generosamente aportados por sus propietarios para promover la educaci&oacute;n y la investigaci&oacute;n. Estos contribuyentes 			conservan todos los derechos de sus im&aacute;genes. A menos que se indique lo contrario, las im&aacute;genes est&aacute;n disponibles bajo la licencia Creative Commons 						Attribution-ShareAlike (CC BY-SA). Los usuarios pueden copiar, transmitir, reutilizar, y/o adaptar el contenido, siempre y cuando se reconozca el origen del contenido. Si el contenido es 					alterado, transformado, o mejorado, este se puede volver a distribuir s&oacute;lo bajo la misma licencia o una similar con la cual fue adquirido.
 			    </div>
-
 				<h2>Notas sobre los registros de espec&iacute;menes e im&aacute;genes</h2>
 			    <div style="margin:15px;">
 					Los ejemplares son generalmente utilizados para la investigaci&oacute;n cient&iacute;fica y debido a su preparaci&oacute;n especializada y uso cuidadoso podr&iacute;an durar 						cientos de a&ntilde;os. Algunas colecciones tienen muestras que fueron recolectadas hace m&aacute;s de 100 a&ntilde;os, que incluso ya no se producen dentro de la zona. Al 						hacer estos ejemplares disponibles en la web como im&aacute;genes, su disponibilidad y valor mejora sin un aumento en el da&ntilde;o inadvertido provocado por el uso. Tenga 				en cuenta que si est&aacute; considerando recolectar muestras, recuerde que ello requiere normalmente del permiso del propietario del terreno y, en el caso de plantas raras y 						en peligro de extinci&oacute;n, se pueden requerir permisos adicionales. Lo mejor es coordinar estos esfuerzos con una instituci&oacute;n regional que maneja una 							colecci&oacute;n accesible p&uacute;blicamente, como por ejemplo, los herbarios que conforman la <b>Red de Herbarios del Noroeste de M&eacute;xico</b>.
