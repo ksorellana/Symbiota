@@ -101,7 +101,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
 		}
 		if(array_key_exists('datasetid',$this->searchTermArr)){
-			$sqlWhere .= 'AND (d.datasetid IN('.$this->searchTermArr['datasetid'].')) ';
+			$sqlWhere .= 'AND (ds.datasetid IN('.$this->searchTermArr['datasetid'].')) ';
 			$this->displaySearchArr[] = 'Dataset(s): '.$this->getDatasetTitle($this->searchTermArr['datasetid']);
 		}
 		$sqlWhere .= $this->getTaxonWhereFrag();
@@ -494,34 +494,36 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	protected function getTableJoins($sqlWhere){
 		$sqlJoin = '';
-		if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
-			if(strpos($sqlWhere,'ctl.clid')){
-				$sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
+		if($sqlWhere){
+			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
+				if(strpos($sqlWhere,'ctl.clid')){
+					$sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
+				}
+				else{
+					$sqlJoin .= 'INNER JOIN fmchklsttaxalink cl ON o.tidinterpreted = cl.tid ';
+				}
 			}
-			else{
-				$sqlJoin .= 'INNER JOIN fmchklsttaxalink cl ON o.tidinterpreted = cl.tid ';
+			if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
+				$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
+			if(strpos($sqlWhere,'e.taxauthid')){
+				$sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
+			}
+			if(strpos($sqlWhere,'ts.family')){
+				$sqlJoin .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
+			}
+			if(strpos($sqlWhere,'ds.datasetid')){
+				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+			}
+			if(array_key_exists('polycoords',$this->searchTermArr) || strpos($sqlWhere,'p.point')){
+				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+			}
+			/*
+			if(array_key_exists('includeothercatnum',$this->searchTermArr)){
+				$sqlJoin .= 'LEFT JOIN omoccuridentifiers oi ON o.occid = oi.occid ';
+			}
+			*/
 		}
-		if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-			$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		}
-		if(strpos($sqlWhere,'e.taxauthid')){
-			$sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
-		}
-		if(strpos($sqlWhere,'ts.family')){
-			$sqlJoin .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
-		}
-		if(strpos($sqlWhere,'d.datasetid')){
-			$sqlJoin .= 'INNER JOIN omoccurdatasetlink d ON o.occid = d.occid ';
-		}
-		if(array_key_exists('polycoords',$this->searchTermArr) || strpos($sqlWhere,'p.point')){
-			$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
-		}
-		/*
-		if(array_key_exists('includeothercatnum',$this->searchTermArr)){
-			$sqlJoin .= 'LEFT JOIN omoccuridentifiers oi ON o.occid = oi.occid ';
-		}
-		*/
 		return $sqlJoin;
 	}
 
@@ -668,7 +670,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			foreach($parsedArr as $k => $v){
 				$k = $this->cleanInputStr($k);
 				$v = $this->cleanInputStr($v);
-				if($k && $v) $this->searchTermArr[$k] = $v;
+				if($k) $this->searchTermArr[$k] = $v;
 			}
 		}
 		//Search will be confinded to a clid vouchers, collid, catid, or will remain open to all collection
@@ -729,6 +731,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$sql = 'SELECT s.statename, c.countryname '.
 						'FROM lkupstateprovince s INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
 						'WHERE c.countryname IN("USA","United States") AND (s.abbrev = "'.$state.'")';
+					if(!$this->lkupTablesExist()){
+						$sql = 'SELECT s.geoTerm AS statename, c.geoTerm AS countryname
+							FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID
+							WHERE c.geoTerm IN("USA","United States") AND (s.abbreviation = "'.$state.'")';
+					}
 					$rs = $this->conn->query($sql);
 					if($r = $rs->fetch_object()){
 						$state = $r->statename;
@@ -925,8 +932,20 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 	}
 
+	private function lkupTablesExist(){
+		$bool = false;
+		// Check to see is old deprecated lookup tables exist
+		$sql = 'SHOW tables LIKE "lkupcountry"';
+		$rs = $this->conn->query($sql);
+		if($rs->num_rows){
+			$bool = true;
+		}
+		$rs->free();
+		return $bool;
+	}
+
 	private function setChecklistVariables($clid){
-		$this->voucherManager = new ChecklistVoucherAdmin($this->conn);
+		$this->voucherManager = new ChecklistVoucherAdmin();
 		$this->voucherManager->setClid($clid);
 		$this->voucherManager->setCollectionVariables();
 	}

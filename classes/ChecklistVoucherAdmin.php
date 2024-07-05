@@ -24,13 +24,13 @@ class ChecklistVoucherAdmin extends Manager {
 			$this->clid = $clid;
 			$this->setMetaData();
 			//Get children checklists
-			$sqlBase = 'SELECT ch.clidchild, cl2.name '.
-				'FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid '.
-				'INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid '.
-				'WHERE (cl2.type != "excludespp") AND cl.clid IN(';
+			$sqlBase = 'SELECT ch.clidchild, cl2.name
+				FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid
+				INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid
+				WHERE (cl2.type != "excludespp") AND (ch.clid != ch.clidchild) AND cl.clid IN(';
 			$sql = $sqlBase.$this->clid.')';
 			do{
-				$childStr = "";
+				$childStr = '';
 				$rsChild = $this->conn->query($sql);
 				while($r = $rsChild->fetch_object()){
 					$this->childClidArr[] = $r->clidchild;
@@ -129,7 +129,7 @@ class ChecklistVoucherAdmin extends Manager {
 			}
 			$result->free();
 			//Get children checklists
-			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
+			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
 			$sqlChild = $sqlChildBase.$this->clid.')';
 			do{
 				$childStr = "";
@@ -370,17 +370,26 @@ class ChecklistVoucherAdmin extends Manager {
 	}
 
 	public function linkTaxaVouchers($occidArr, $useCurrentTaxon = true, $linkVouchers = true){
-		$tidsUsed = array();
+		$tidMap = array();
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
-			$tid = $vArr[1];
-			$occid = $vArr[0];
-			if(count($vArr) == 2 && is_numeric($occid) && is_numeric($tid)){
-				if($useCurrentTaxon) $tid = $this->getTidAccepted($tid);
-				if(!in_array($tid, $tidsUsed)){
-					//Add name to checklist
-					$clTaxaID = $this->insertChecklistTaxaLink($tid);
-					$tidsUsed[] = $tid;
+			if(count($vArr) == 2){
+				$tid = $vArr[1];
+				$occid = $vArr[0];
+				if(is_numeric($occid) && is_numeric($tid)){
+					$clTaxaID = 0;
+					if(isset($tidMap[$tid])) $clTaxaID = $tidMap[$tid];
+					else{
+						$clTaxaID = $this->getClTaxaID($tid);
+						if(!$clTaxaID){
+							if($useCurrentTaxon){
+								$tid = $this->getTidAccepted($tid);
+							}
+							//Add name to checklist
+							$clTaxaID = $this->insertChecklistTaxaLink($tid);
+						}
+						$tidMap[$tid] = $clTaxaID;
+					}
 					if($clTaxaID && $linkVouchers){
 						$this->insertVoucher($clTaxaID, $occid);
 					}
@@ -408,9 +417,9 @@ class ChecklistVoucherAdmin extends Manager {
 				$tidTarget = $this->getTidInterpreted($occid);
 				if($oldClTaxaID && $tidTarget){
 					//Make sure target name is already linked to checklist
-					$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties) '.
-						'SELECT '.$tidTarget.' as tid, c.clid, c.morphospecies, c.familyoverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source, c.internalnotes, c.dynamicProperties '.
-						'FROM fmchklsttaxalink WHERE (cltaxaid = ?)';
+					$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties)
+						SELECT '.$tidTarget.' as tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties
+						FROM fmchklsttaxalink WHERE (cltaxaid = ?)';
 					if($stmt2 = $this->conn->prepare($sql2)) {
 						$stmt2->bind_param('i', $oldClTaxaID);
 						$stmt2->execute();
@@ -514,13 +523,20 @@ class ChecklistVoucherAdmin extends Manager {
 	//Misc support and data functions
 	protected function getClTaxaID($tid, $morphoSpecies = ''){
 		$clTaxaID = 0;
+		$resultTid = 0;
 		if(is_numeric($tid)){
-			$sql = 'SELECT clTaxaID FROM fmchklsttaxalink WHERE clid = ? AND tid = ? AND morphospecies = ?';
-			if($stmt = $this->conn->prepare($sql)) {
+			$sql = 'SELECT c.clTaxaID, c.tid
+				FROM fmchklsttaxalink c INNER JOIN taxstatus ts ON c.tid = ts.tid
+				INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted
+				WHERE ts.taxAuthID = 1 AND ts2.taxAuthID = 1 AND c.clid = ? AND ts2.tid = ? AND c.morphospecies = ?';
+			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('iis', $this->clid, $tid, $morphoSpecies)){
 					$stmt->execute();
-					$stmt->bind_result($clTaxaID);
-					$stmt->fetch();
+					$stmt->bind_result($clTaxaID, $resultTid);
+					while($stmt->fetch()){
+						//If there are multiple accepted records, take preferrence to clTaxaID associated with the accepted taxon
+						if($tid == $resultTid) break;
+					}
 					$stmt->close();
 				}
 				else $this->errorMessage = 'ERROR binding params for getClTaxaID: '.$this->conn->error;
@@ -758,17 +774,14 @@ class ChecklistVoucherAdmin extends Manager {
 		$charSetOut = 'ISO-8859-1';
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
-			if($charSetOut == 'UTF-8' && $charSetSource == 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
+			if($charSetOut == 'UTF-8'){
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
 			}
-			elseif($charSetOut == "ISO-8859-1" && $charSetSource == 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
+			elseif($charSetOut == 'ISO-8859-1'){
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+			}
+			else{
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
 			}
 		}
 		return $retStr;

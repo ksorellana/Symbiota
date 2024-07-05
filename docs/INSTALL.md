@@ -8,7 +8,7 @@
   - Recommended configuration adjustments: upload_max_filesize = 100M (or expected file size upload), max_input_vars = 2000, memory_limit = 256M, post_max_size = 100M
   - Optional: Pear package Image_Barcode2 (https://pear.php.net/package/Image_Barcode2) – enables barcodes on specimen labels
   - Optional: Install Pear Mail for SMTP mail support: https://pear.php.net/package/Mail/redirected
-- MariaDB (v10.3+) or MySQL (v5.7+)
+- MariaDB (v10.3+) 
 - GIT Client - not required, though recommend for installation and updating source code
 
 ## INSTRUCTIONS
@@ -51,6 +51,8 @@
       Thus, you can modify this file to globally change design of portal.
    6. Misc: rename usagepolicy_template.php to usagepolicy.php, and modify as needed
 4. File permissions - the web server needs write access to the following files and their subdirectories  (e.g. sudo chmod -R 777 temp/)
+   - /api/storage/framework
+   - /api/storage/logs
    - /content/collections/ 
    - /content/collicon/
    - /content/dwca/
