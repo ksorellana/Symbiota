@@ -27,16 +27,16 @@ $LANG['DESC_BLOCK_EDITS'] = 'Ediciones del Bloque de Descripción';
 $LANG['SAVE_EDITS'] = 'Guardar Ediciones';
 $LANG['SURE_DELETE_DESC'] = '¿Está seguro de que desea eliminar permanentemente esta descripción?';
 $LANG['DEL_DESC_BLOCK'] = 'Eliminar bloque de descripción';
-$LANG['INC_STATEMENTS_BELOW'] = '(Incluyendo todas las declaraciones enumeradas a continuación)';
-$LANG['STATEMENTS'] = 'Declaraciones';
-$LANG['ADD_NEW_STATEMENT'] = 'Agregar Nueva Declaración';
+$LANG['INC_STATEMENTS_BELOW'] = '(Incluyendo todas las descripciones enumeradas a continuación)';
+$LANG['STATEMENTS'] = 'Descripciones';
+$LANG['ADD_NEW_STATEMENT'] = 'Agregar Nueva Descripción';
 $LANG['NEW_DESC_STATMENT'] = 'Nueva Declaración de Descripción';
 $LANG['HEADING'] = 'Título';
-$LANG['ADD_STATEMENT'] = 'Agregar Declaración';
-$LANG['EDIT_STATEMENT'] = 'Editar Declaración';
+$LANG['ADD_STATEMENT'] = 'Agregar Descripción';
+$LANG['EDIT_STATEMENT'] = 'Editar Descripción';
 $LANG['DISPLAY_HEADER'] = 'Mostrar Encabezado';
-$LANG['SURE_DELETE_STATEMENT'] = '¿Está seguro de que desea eliminar permanentemente esta declaración?';
-$LANG['DEL_STATEMENT'] = 'Eliminar Declaración';
+$LANG['SURE_DELETE_STATEMENT'] = '¿Está seguro de que desea eliminar permanentemente esta descripción?';
+$LANG['DEL_STATEMENT'] = 'Eliminar Descripción';
 $LANG['NO_DESC'] = 'No hay descripciones disponibles';
 
 ?>
